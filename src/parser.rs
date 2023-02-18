@@ -15,3 +15,10 @@ pub fn parse_to_fn_sig(item: &Item) -> Option<&Signature> {
 	}
 	None
 }
+
+pub fn parse_to_fn(item: &Item) -> Option<&ItemFn> {
+	if let Fn(func) = item {
+		return Some(&func);
+	}
+	None
+}

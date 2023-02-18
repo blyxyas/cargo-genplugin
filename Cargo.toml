@@ -11,4 +11,4 @@ syn = { version = "1.0.107", features = ["parsing", "full"] }
 clap = { version = "4.1.6", features = ["derive"] }
 
 [workspace]
-members = ["stubs", "example"]
+members = ["stubs", "wawa"]
