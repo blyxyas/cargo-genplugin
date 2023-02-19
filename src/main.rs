@@ -139,12 +139,12 @@ fn only_pats(punct: &Punctuated<FnArg, Comma>) -> String {
     for arg in punct.iter() {
         if let FnArg::Receiver(receiver) = &arg {
             if let Some(lifetime) = receiver.lifetime() {
-                result.push_str(&lifetime.ident.to_string());
+                result.push_str(&format!("{},", &lifetime.ident.to_string()));
             } else {
-                result.push_str("self");
+                result.push_str("self,");
             }
         } else if let FnArg::Typed(patty) = &arg {
-            result.push_str(&patty.pat.to_token_stream().to_string());
+            result.push_str(&format!("{},", &patty.pat.to_token_stream().to_string()));
         }
     }
     result
