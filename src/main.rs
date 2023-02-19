@@ -6,13 +6,18 @@ use std::{
     process::Command,
 };
 
-use syn::{
-    Signature, __private::ToTokens, punctuated::Punctuated, token::Comma, FnArg, Item,
-};
+use syn::{Signature, __private::ToTokens, punctuated::Punctuated, token::Comma, FnArg, Item};
 
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
+#[command(name = "cargo")]
+#[command(bin_name = "cargo")]
+enum CargoCli {
+	Plugin(Args)
+}
+
+#[derive(clap::Args)]
 struct Args {
     /// Path to Cargo project containing the plugin
     input: String,
@@ -29,18 +34,20 @@ struct Args {
 mod parser;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut args = Args::parse();
+    let CargoCli::Plugin(mut args) = CargoCli::parse();
 
     if !args.so.ends_with(".so") {
         args.so.push_str(".so");
     }
+
+	dbg!(&args.input);
 
     let ast = parser::parse_file(&format!("{}/src/lib.rs", args.input))?;
 
     // Create Cargo project
     if !Path::new(&args.stubs).exists() {
         Command::new("cargo")
-            .args(&["new", &args.stubs])
+            .args(&["new", &args.stubs, "--lib"])
             .status()
             .expect("Couldn't create a new cargo project");
     };
@@ -69,10 +76,10 @@ use libloading;
 			use	lazy_static;
 				lazy_static::lazy_static! {{
 					static ref LIB: libloading::Library =
-						unsafe {{ libloading::Library::new(\"../{}/target/release/{}\").expect(\"Couldn't load library\") }};
+						unsafe {{ libloading::Library::new(\"{}/target/release/{}\").expect(\"Couldn't load library {}\") }};
 				}}
 			\n",
-            get_funcs(&ast.items), args.input, args.so
+            get_funcs(&ast.items), std::fs::canonicalize(&args.input).expect(&format!("Couldn't canonicalize path '{}'", args.input)).display(), args.so, args.so
         )
         .as_bytes(),
     )
@@ -144,11 +151,11 @@ fn only_pats(punct: &Punctuated<FnArg, Comma>) -> String {
 }
 
 fn get_funcs(items: &Vec<Item>) -> String {
-	let mut result = String::new();
-	for item in items {
-		if let Some(func) = parser::parse_to_fn(item) {
-			result.push_str(&format!("* {}\n", func.sig.ident.to_string()));
-		};
-	};
-	result
+    let mut result = String::new();
+    for item in items {
+        if let Some(func) = parser::parse_to_fn(item) {
+            result.push_str(&format!("* {}\n", func.sig.ident.to_string()));
+        };
+    }
+    result
 }
