@@ -113,3 +113,4 @@ cargo genplugin --help
 
 #### LICENSE
 
+`cargo-genplugin` uses **Apache License 2.0**. [More information about licensing](https://github.com/blyxyas/cargo-genplugin/blob/main/LICENSE)
