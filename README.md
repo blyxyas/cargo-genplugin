@@ -83,3 +83,33 @@ fn main() {
 Take into account that the code will always unsafe. Also take into account that plugged-in code can potentially be malicious.
 
 ## Installation
+
+Currently `cargo-genplugin` isn't uploaded to [crates.io](https://crates.io), so you'll have to manually compile it yourself.
+
+### Compiling the binary
+
+1. Get the repository
+
+```
+git clone https://github.com/blyxyas/cargo-genplugin.git
+cd cargo-genplugin
+```
+
+2. Install the binary
+   
+```
+cargo install --path .
+```
+
+3. **✨ It's ready to use! ✨**
+
+```
+cargo genplugin --help
+```
+
+#### Stargazers
+
+[![Stargazers repo roster for @blyxyas/cargo-genplugin](https://reporoster.com/stars/blyxyas/cargo-genplugin)](https://github.com/blyxyas/cargo-genplugin/stargazers)
+
+#### LICENSE
+
